@@ -2,10 +2,13 @@ import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { sendEmail } from "../utils/sendEmail.js";
 
 const registerUser = asyncHandler(async (req, res) => {
     const { username, email, password, fullName, contactDetails } = req.body;
+
+    console.log(username, password, email, fullName, contactDetails);
 
     // Validate required fields
     if (
@@ -14,11 +17,6 @@ const registerUser = asyncHandler(async (req, res) => {
         )
     ) {
         throw new ApiError(400, "Required fields are missing");
-    }
-
-    // Validate contactDetails is a number
-    if (typeof contactDetails !== "number") {
-        throw new ApiError(400, "Contact Details must be a number");
     }
 
     // Check if user already exists
@@ -50,7 +48,7 @@ const registerUser = asyncHandler(async (req, res) => {
     await sendEmail(email, userEmailSubject, userEmailText);
 
     // Send notification email to admin
-    const adminEmail = process.env.ADMIN_EMAIL; // Admin email from environment variables
+    const adminEmail = process.env.EMAIL_USER; // Admin email from environment variables
     const adminEmailSubject = "New User Registration";
     const adminEmailText = `A new user has registered:\n\nUsername: ${username}\nEmail: ${email}\nFull Name: ${fullName}\nContact Details: ${contactDetails}`;
     await sendEmail(adminEmail, adminEmailSubject, adminEmailText);
@@ -62,7 +60,7 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const generateTokens = async (userId) => {
-    const user = User.findById(userId);
+    const user = await User.findById(userId);
 
     const accessToken = await user.generateAccessToken();
     const refreshToken = await user.generateRefreshToken();
@@ -92,9 +90,10 @@ const loginUser = asyncHandler(async (req, res) => {
         );
     }
 
-    const user = User.findOne({
+    const user = await User.findOne({
         $or: [{ username }, { email }],
-    }).select("-password -refreshToken");
+    }).select("-refreshToken");
+
     if (!user) {
         throw new ApiError(404, "No such user found");
     }
@@ -103,6 +102,10 @@ const loginUser = asyncHandler(async (req, res) => {
     if (!isPasswordValid) {
         throw new ApiError(403, "Invalid password during login");
     }
+
+    const loggedInUser = await User.findById(user._id).select(
+        "-password -refreshToken"
+    );
 
     const { accessToken, refreshToken } = await generateTokens(user._id);
 
@@ -118,7 +121,7 @@ const loginUser = asyncHandler(async (req, res) => {
         .json(
             new ApiResponse(
                 200,
-                { user, accessToken },
+                { user: loggedInUser, accessToken },
                 "User logged in successfully"
             )
         );
@@ -271,17 +274,17 @@ const updateUserDetails = asyncHandler(async (req, res) => {
 });
 
 const contactUs = asyncHandler(async (req, res) => {
-    const { name, email, message } = req.body;
+    const { name, email, services, phone } = req.body;
 
     // Validate required fields
-    if (!name || !email || !message) {
-        throw new ApiError(400, "Name, email, and message are required");
+    if ([name, email, services, phone].some((field) => field?.trim() === "")) {
+        throw new ApiError(400, "Name, email, and services are required");
     }
 
     // Send email to admin
     const adminEmail = process.env.ADMIN_EMAIL; // Admin email from environment variables
     const subject = "New Contact Query";
-    const text = `You have a new contact query:\n\nName: ${name}\nEmail: ${email}\nMessage: ${message}`;
+    const text = `You have a new contact query:\n\nName: ${name}\nEmail: ${email}\nMessage: ${services}\nPhone: ${phone}`;
 
     await sendEmail(adminEmail, subject, text);
 
@@ -291,6 +294,21 @@ const contactUs = asyncHandler(async (req, res) => {
         .json(
             new ApiResponse(200, {}, "Your message has been sent successfully")
         );
+});
+
+const addFeatures = asyncHandler(async (req, res) => {
+    const { title, text } = req.body;
+    if ([title, text].some((field) => field?.trim() === "")) {
+        throw new ApiError(400, "No features found!");
+    }
+
+    // set the default icon
+    const icon = req.icon;
+    if (!icon) {
+        await uploadOnCloudinary("public/temp/cartoon-rocket-ship.png");
+    } else {
+        await uploadOnCloudinary();
+    }
 });
 
 export {

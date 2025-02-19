@@ -1,17 +1,25 @@
-import { useState } from "react";
-import {
-    ChevronRightIcon,
-    SunIcon,
-    MoonIcon,
-} from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { FaChartLine, FaLock, FaRocket } from "react-icons/fa";
 import { FiSmartphone, FiCode, FiServer } from "react-icons/fi";
-import Particles from "react-tsparticles";
-import { loadFull } from "tsparticles";
 import { motion } from "framer-motion";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { useSelector } from "react-redux";
+import React from "react";
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
+import wallpaper from "../assets/sebastian-svenson-d2w-_1LJioQ-unsplash.jpg"; // Import your wallpaper image
+import lightModeWallpaper from "../assets/light-mode.jpg"; // Import the light mode wallpaper image
 
 const LandingPage = () => {
-    const [isDark, setIsDark] = useState(true);
+    let isDark = useSelector((state) => state.theme.isDark);
+
+    const navigate = useNavigate(); // Use useNavigate hook
+
+    const handleGetStarted = () => {
+        navigate("/contact-us");
+    };
 
     const features = [
         {
@@ -49,10 +57,6 @@ const LandingPage = () => {
         },
     ];
 
-    const particlesInit = async (main) => {
-        await loadFull(main);
-    };
-
     // Floating device mockup animation
     const FloatingDevice = () => (
         <motion.div
@@ -61,103 +65,95 @@ const LandingPage = () => {
             transition={{
                 duration: 3,
                 repeat: Infinity,
-                repeatType: "reverse",
+                repeatType: "mirror",
             }}
-            className="relative w-96 h-96"
+            className="relative w-[36rem] h-[36rem]"
         >
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 dark:from-blue-600 dark:to-purple-600 rounded-3xl transform rotate-12 shadow-2xl">
-                <div className="absolute inset-2 bg-gray-100 dark:bg-gray-900 rounded-2xl p-4">
-                    <div className="h-full bg-gray-200 dark:bg-gray-800 rounded-lg" />
-                </div>
-            </div>
+            <DotLottieReact
+                src="https://lottie.host/21e922d0-a937-4248-a2d8-3f811abbe40a/YGYG5ca5oF.lottie"
+                loop
+                autoplay
+            />
         </motion.div>
     );
+
+    // Custom Arrow Components
+    const CustomPrevArrow = (props) => {
+        const { currentSlide, slideCount, ...rest } = props; // Filter out unwanted props
+        return (
+            <div
+                {...rest}
+                className={`absolute top-1/2 -left-10 transform -translate-y-1/2 cursor-pointer p-2 rounded-full ${
+                    isDark ? "bg-gray-800 text-white" : "bg-white text-gray-900"
+                } shadow-lg hover:bg-blue-500 hover:text-white transition-all duration-300`}
+            >
+                <ChevronLeftIcon className="w-6 h-6" />
+            </div>
+        );
+    };
+
+    const CustomNextArrow = (props) => {
+        const { currentSlide, slideCount, ...rest } = props; // Filter out unwanted props
+        return (
+            <div
+                {...rest}
+                className={`absolute top-1/2 -right-10 transform -translate-y-1/2 cursor-pointer p-2 rounded-full ${
+                    isDark ? "bg-gray-800 text-white" : "bg-white text-gray-900"
+                } shadow-lg hover:bg-blue-500 hover:text-white transition-all duration-300`}
+            >
+                <ChevronRightIcon className="w-6 h-6" />
+            </div>
+        );
+    };
+
+    // Updated Carousel Settings
+    const carouselSettings = {
+        dots: true,
+        infinite: true,
+        speed: 300,
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        centerMode: true,
+        centerPadding: "50px",
+        prevArrow: <CustomPrevArrow />,
+        nextArrow: <CustomNextArrow />,
+        responsive: [
+            {
+                breakpoint: 1024,
+                settings: {
+                    slidesToShow: 2,
+                    slidesToScroll: 1,
+                    infinite: true,
+                    dots: true,
+                    centerPadding: "50px",
+                },
+            },
+            {
+                breakpoint: 600,
+                settings: {
+                    slidesToShow: 1,
+                    slidesToScroll: 1,
+                    initialSlide: 1,
+                    centerPadding: "30px",
+                },
+            },
+        ],
+    };
 
     return (
         <div
             className={`min-h-screen transition-colors duration-300 ${
                 isDark ? "dark bg-gray-900" : "bg-gray-50"
             }`}
+            style={{
+                backgroundImage: `url(${
+                    isDark ? wallpaper : lightModeWallpaper
+                })`,
+                backgroundSize: "cover",
+                backgroundRepeat: "repeat-x", // Repeat the background image horizontally
+                backgroundPosition: "center top", // Position the background image at the top center
+            }} // Add background image
         >
-            {/* Particles Background */}
-            <div className="fixed inset-0 -z-10 opacity-50">
-                <Particles
-                    init={particlesInit}
-                    options={{
-                        particles: {
-                            number: { value: 50 },
-                            color: { value: isDark ? "#3B82F6" : "#60A5FA" },
-                            opacity: { value: 0.5 },
-                            size: { value: 1 },
-                            links: {
-                                enable: true,
-                                color: isDark ? "#ffffff" : "#1F2937",
-                                opacity: 0.2,
-                            },
-                            move: { enable: true, speed: 1 },
-                        },
-                    }}
-                />
-            </div>
-
-            {/* Navigation */}
-            <nav
-                className={`fixed w-full backdrop-blur-lg z-50 transition-all duration-300 ${
-                    isDark ? "bg-gray-900/80" : "bg-white/80"
-                }`}
-            >
-                <div className="container mx-auto px-6 py-4">
-                    <div className="flex items-center justify-between">
-                        <div
-                            className={`text-2xl font-bold ${
-                                isDark ? "text-white" : "text-gray-900"
-                            }`}
-                        >
-                            Hack<span className="text-blue-500">ence</span>
-                        </div>
-
-                        <div className="hidden md:flex items-center space-x-8">
-                            <a
-                                href="#features"
-                                className={`hover:text-blue-500 transition-colors ${
-                                    isDark ? "text-gray-300" : "text-gray-600"
-                                }`}
-                            >
-                                Features
-                            </a>
-                            <a
-                                href="#services"
-                                className={`hover:text-blue-500 transition-colors ${
-                                    isDark ? "text-gray-300" : "text-gray-600"
-                                }`}
-                            >
-                                Services
-                            </a>
-                            <a
-                                href="#contact"
-                                className={`hover:text-blue-500 transition-colors ${
-                                    isDark ? "text-gray-300" : "text-gray-600"
-                                }`}
-                            >
-                                Contact
-                            </a>
-                            <button
-                                onClick={() => setIsDark(!isDark)}
-                                className={`p-2 rounded-full ${
-                                    isDark ? "bg-gray-800" : "bg-gray-200"
-                                }`}
-                            >
-                                {isDark ? (
-                                    <SunIcon className="w-6 h-6 text-yellow-400" />
-                                ) : (
-                                    <MoonIcon className="w-6 h-6 text-gray-600" />
-                                )}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-
             {/* Hero Section */}
             <header className="pt-24 pb-12">
                 <div className="container mx-auto px-6">
@@ -181,6 +177,7 @@ const LandingPage = () => {
                                 cutting-edge technology solutions.
                             </p>
                             <button
+                                onClick={() => navigate("/contact-us")} // Corrected onClick handler
                                 className={`flex items-center px-8 py-4 rounded-full transition-all duration-300 ${
                                     isDark
                                         ? "bg-blue-600 hover:bg-blue-700 text-white"
@@ -201,105 +198,152 @@ const LandingPage = () => {
             {/* Features Section */}
             <section className="py-20" id="features">
                 <div className="container mx-auto px-6">
-                    <h2
+                    <motion.h2
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
                         className={`text-4xl font-bold mb-16 text-center ${
                             isDark ? "text-white" : "text-gray-900"
                         }`}
                     >
                         Why Choose Us
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    </motion.h2>
+                    <Slider {...carouselSettings}>
                         {features.map((feature, index) => (
-                            <motion.div
-                                key={index}
-                                whileHover={{ scale: 1.05 }}
-                                className={`p-8 rounded-2xl transition-all duration-300 ${
-                                    isDark
-                                        ? "bg-gray-800 hover:bg-gray-700"
-                                        : "bg-white hover:bg-gray-50 shadow-lg"
-                                }`}
-                            >
-                                <div className="text-blue-500 mb-4">
-                                    {feature.icon}
-                                </div>
-                                <h3
-                                    className={`text-2xl font-bold mb-4 ${
-                                        isDark ? "text-white" : "text-gray-900"
-                                    }`}
-                                >
-                                    {feature.title}
-                                </h3>
-                                <p
-                                    className={
+                            <div key={index} className="px-2 my-2">
+                                <motion.div
+                                    whileHover={{ scale: 1.05 }}
+                                    className={`p-8 rounded-2xl transition-all duration-300 h-full ${
                                         isDark
-                                            ? "text-gray-400"
-                                            : "text-gray-600"
-                                    }
+                                            ? "bg-gray-800 hover:bg-gray-700"
+                                            : "bg-white hover:bg-gray-50 shadow-lg"
+                                    }`}
+                                    style={{
+                                        backdropFilter: "blur(10px)",
+                                        backgroundColor: isDark
+                                            ? "rgba(31, 41, 55, 0.7)"
+                                            : "rgba(255, 255, 255, 0.7)",
+                                    }}
                                 >
-                                    {feature.text}
-                                </p>
-                            </motion.div>
+                                    <div className="text-blue-500 mb-4">
+                                        {feature.icon}
+                                    </div>
+                                    <h3
+                                        className={`text-2xl font-bold mb-4 ${
+                                            isDark
+                                                ? "text-white"
+                                                : "text-gray-900"
+                                        }`}
+                                    >
+                                        {feature.title}
+                                    </h3>
+                                    <p
+                                        className={
+                                            isDark
+                                                ? "text-gray-400"
+                                                : "text-gray-600"
+                                        }
+                                    >
+                                        {feature.text}
+                                    </p>
+                                </motion.div>
+                            </div>
                         ))}
-                    </div>
+                    </Slider>
                 </div>
             </section>
+
+            <div className="h-96 w-full flex justify-center items-center">
+                <motion.div
+                    initial={{ x: -20 }}
+                    animate={{ x: 20 }}
+                    transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        repeatType: "mirror",
+                    }}
+                    className="relative w-[36rem] h-[36rem]"
+                >
+                    <DotLottieReact
+                        src="https://lottie.host/f4dcfe88-f8c1-4476-a286-2d989c7ed4ef/MhtAeezHJD.lottie"
+                        loop
+                        autoplay
+                    />
+                </motion.div>
+            </div>
 
             {/* Services Section */}
             <section className="py-20" id="services">
                 <div className="container mx-auto px-6">
-                    <h2
+                    <motion.h2
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
                         className={`text-4xl font-bold mb-16 text-center ${
                             isDark ? "text-white" : "text-gray-900"
                         }`}
                     >
                         Our Services
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                    </motion.h2>
+                    <Slider {...carouselSettings}>
                         {services.map((service, index) => (
-                            <motion.div
-                                key={index}
-                                whileHover={{ scale: 1.05 }}
-                                className={`p-8 rounded-2xl transition-all duration-300 ${
-                                    isDark
-                                        ? "bg-gray-800 hover:bg-gray-700"
-                                        : "bg-white hover:bg-gray-50 shadow-lg"
-                                }`}
-                            >
-                                <div className="text-blue-500 mb-6">
-                                    {service.icon}
-                                </div>
-                                <h3
-                                    className={`text-2xl font-bold mb-4 ${
-                                        isDark ? "text-white" : "text-gray-900"
-                                    }`}
-                                >
-                                    {service.title}
-                                </h3>
-                                <p
-                                    className={
+                            <div key={index} className="px-2 my-2">
+                                <motion.div
+                                    whileHover={{ scale: 1.05 }}
+                                    className={`p-8 rounded-2xl transition-all duration-300 h-full ${
                                         isDark
-                                            ? "text-gray-400"
-                                            : "text-gray-600"
-                                    }
+                                            ? "bg-gray-800 hover:bg-gray-700"
+                                            : "bg-white hover:bg-gray-50 shadow-lg"
+                                    }`}
+                                    style={{
+                                        backdropFilter: "blur(10px)",
+                                        backgroundColor: isDark
+                                            ? "rgba(31, 41, 55, 0.7)"
+                                            : "rgba(255, 255, 255, 0.7)",
+                                    }}
                                 >
-                                    {service.text}
-                                </p>
-                            </motion.div>
+                                    <div className="text-blue-500 mb-6">
+                                        {service.icon}
+                                    </div>
+                                    <h3
+                                        className={`text-2xl font-bold mb-4 ${
+                                            isDark
+                                                ? "text-white"
+                                                : "text-gray-900"
+                                        }`}
+                                    >
+                                        {service.title}
+                                    </h3>
+                                    <p
+                                        className={
+                                            isDark
+                                                ? "text-gray-400"
+                                                : "text-gray-600"
+                                        }
+                                    >
+                                        {service.text}
+                                    </p>
+                                </motion.div>
+                            </div>
                         ))}
-                    </div>
+                    </Slider>
                 </div>
             </section>
 
             {/* CTA Section */}
             <section className="py-20" id="cta">
                 <div className="container mx-auto px-6 text-center">
-                    <h2
+                    <motion.h2
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        id="contact"
                         className={`text-4xl font-bold mb-8 ${
                             isDark ? "text-white" : "text-gray-900"
                         }`}
                     >
                         Ready to Transform Your Business?
-                    </h2>
+                    </motion.h2>
                     <p
                         className={`mb-12 max-w-2xl mx-auto ${
                             isDark ? "text-gray-300" : "text-gray-600"
@@ -309,32 +353,18 @@ const LandingPage = () => {
                         revolutionized their digital presence with our expert
                         solutions.
                     </p>
-                    <button
-                        className={`px-12 py-4 rounded-full text-lg font-semibold transition-all duration-300 ${
+                    <Link
+                        to="/contact-us"
+                        className={`md:text-lg mb-6 leading-tight px-12 py-4 rounded-full text-sm font-semibold transition-all duration-300 ${
                             isDark
                                 ? "bg-blue-600 hover:bg-blue-700 text-white"
                                 : "bg-blue-500 hover:bg-blue-600 text-white"
                         }`}
                     >
                         Schedule a Free Consultation
-                    </button>
+                    </Link>
                 </div>
             </section>
-
-            {/* Footer */}
-            <footer
-                className={`py-12 ${isDark ? "bg-gray-800" : "bg-gray-100"}`}
-            >
-                <div className="container mx-auto px-6">
-                    <div
-                        className={`text-center ${
-                            isDark ? "text-gray-400" : "text-gray-600"
-                        }`}
-                    >
-                        © 2025 Hackence. All rights reserved.
-                    </div>
-                </div>
-            </footer>
         </div>
     );
 };

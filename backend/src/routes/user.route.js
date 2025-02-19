@@ -4,6 +4,7 @@ import {
     contactUs,
     getCurrentUser,
     loginUser,
+    logoutUser,
     refreshAccessToken,
     registerUser,
     updateUserDetails,
@@ -13,7 +14,8 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 const router = Router();
 
 router.route("/register").post(registerUser);
-router.route("/login").post(verifyJWT, loginUser);
+router.route("/login").post(loginUser);
+router.route("/logout").post(logoutUser);
 router.route("/change-password").patch(verifyJWT, changeCurrentPassword);
 router.route("/change-user-details").patch(verifyJWT, updateUserDetails);
 router.route("/get-current-user").get(verifyJWT, getCurrentUser);

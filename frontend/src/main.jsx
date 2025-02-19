@@ -8,22 +8,26 @@ import {
     RouterProvider,
 } from "react-router-dom";
 import Layout from "./Layout";
-import { UserContextProvider } from "./contexts";
-import { HomePage, LandingPage } from "./components";
+import { ContactUs, LandingPage, Login, Register } from "./components";
+import { Provider } from "react-redux";
+import { store } from "./store/app";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<Layout />}>
             <Route path="" element={<LandingPage />} />
-            <Route path="home" element={<HomePage />} />
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
+            <Route path="contact-us" element={<ContactUs />} />
+            <Route path="logout" element={<LandingPage />} />
         </Route>
     )
 );
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
-        <UserContextProvider>
+        <Provider store={store}>
             <RouterProvider router={router} />
-        </UserContextProvider>
+        </Provider>
     </StrictMode>
 );
