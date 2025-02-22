@@ -273,29 +273,6 @@ const updateUserDetails = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, user, "User details updated successfully"));
 });
 
-const contactUs = asyncHandler(async (req, res) => {
-    const { name, email, services, phone } = req.body;
-
-    // Validate required fields
-    if ([name, email, services, phone].some((field) => field?.trim() === "")) {
-        throw new ApiError(400, "Name, email, and services are required");
-    }
-
-    // Send email to admin
-    const adminEmail = process.env.ADMIN_EMAIL; // Admin email from environment variables
-    const subject = "New Contact Query";
-    const text = `You have a new contact query:\n\nName: ${name}\nEmail: ${email}\nMessage: ${services}\nPhone: ${phone}`;
-
-    await sendEmail(adminEmail, subject, text);
-
-    // Return success response
-    return res
-        .status(200)
-        .json(
-            new ApiResponse(200, {}, "Your message has been sent successfully")
-        );
-});
-
 const addFeatures = asyncHandler(async (req, res) => {
     const { title, text } = req.body;
     if ([title, text].some((field) => field?.trim() === "")) {
@@ -319,5 +296,4 @@ export {
     changeCurrentPassword,
     getCurrentUser,
     updateUserDetails,
-    contactUs,
 };
