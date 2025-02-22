@@ -1,7 +1,6 @@
 import { Router } from "express";
 import {
     changeCurrentPassword,
-    contactUs,
     getCurrentUser,
     loginUser,
     logoutUser,

@@ -11,6 +11,7 @@ import Layout from "./Layout";
 import { ContactUs, LandingPage, Login, Register } from "./components";
 import { Provider } from "react-redux";
 import { store } from "./store/app";
+import ThankYou from "./pages/ThankYou";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -20,6 +21,7 @@ const router = createBrowserRouter(
             <Route path="register" element={<Register />} />
             <Route path="contact-us" element={<ContactUs />} />
             <Route path="logout" element={<LandingPage />} />
+            <Route path="thank-you" element={<ThankYou />} />
         </Route>
     )
 );

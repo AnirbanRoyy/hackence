@@ -32,7 +32,7 @@ function Navbar() {
     return (
         <div>
             <nav
-                className={`fixed w-full backdrop-blur-lg z-50 transition-all duration-300 ${
+                className={`fixed rounded-full top-2 w-full backdrop-blur-sm z-50 transition-all duration-300 ${
                     isDark ? "bg-gray-900/80" : "bg-white/80"
                 }`}
             >

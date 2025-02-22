@@ -17,10 +17,6 @@ const LandingPage = () => {
 
     const navigate = useNavigate(); // Use useNavigate hook
 
-    const handleGetStarted = () => {
-        navigate("/contact-us");
-    };
-
     const features = [
         {
             icon: <FaChartLine className="w-6 h-6" />,

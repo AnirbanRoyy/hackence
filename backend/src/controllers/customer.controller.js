@@ -1,8 +1,8 @@
-import { Customer } from "../models/customer.model";
-import { ApiError } from "../utils/ApiError";
-import { ApiResponse } from "../utils/ApiResponse";
-import { asyncHandler } from "../utils/asyncHandler";
-import { sendEmail } from "../utils/sendEmail";
+import { Customer } from "../models/customer.model.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { sendEmail } from "../utils/sendEmail.js";
 
 const contactUs = asyncHandler(async (req, res) => {
     const { name, email, phone, query } = req.body;
@@ -28,7 +28,7 @@ const contactUs = asyncHandler(async (req, res) => {
     // Send email to admin
     const adminEmail = process.env.ADMIN_EMAIL; // Admin email from environment variables
     const subject = "New Contact Query";
-    const text = `You have a new contact query:\n\nName: ${name}\nEmail: ${email}\nMessage: ${services}\nPhone: ${phone}`;
+    const text = `You have a new contact query:\n\nName: ${name}\nEmail: ${email}\nMessage: ${query}\nPhone: ${phone}`;
 
     sendEmail(adminEmail, subject, text);
 

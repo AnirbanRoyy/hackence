@@ -3,17 +3,22 @@ import { useSelector } from "react-redux";
 import { FaUser, FaPhone, FaEnvelope, FaComment } from "react-icons/fa";
 import { motion } from "framer-motion";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 const ContactUs = () => {
     const isDark = useSelector((state) => state.theme.isDark);
-
+    const navigate = useNavigate();
     // State for form inputs
     const [formData, setFormData] = useState({
         name: "",
         phone: "",
         email: "",
-        services: "",
+        query: "",
     });
+
+    // State for loading
+    const [isLoading, setIsLoading] = useState(false);
 
     // Handle form input changes
     const handleChange = (e) => {
@@ -24,12 +29,20 @@ const ContactUs = () => {
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Add your form submission logic here (e.g., API call)
-        await axios.post("http://localhost:8000/api/v1/users/contact-us", {...formData})
-        console.log({...formData});
-        
-        alert("Thank you for contacting us! We'll get back to you soon.");
-        setFormData({ name: "", phone: "", email: "", services: "" }); // Reset form
+        setIsLoading(true);
+        try {
+            await axios.post(
+                "http://localhost:8000/api/v1/customers/contact-us",
+                { ...formData }
+            );
+            setTimeout(() => {
+                setIsLoading(false);
+                navigate("/thank-you");
+            }, 4000); // Adjust the timeout duration to match the animation duration
+        } catch (error) {
+            setIsLoading(false);
+            alert("There was an error submitting the form. Please try again.");
+        }
     };
 
     return (
@@ -172,8 +185,8 @@ const ContactUs = () => {
                                     }`}
                                 />
                                 <textarea
-                                    name="services"
-                                    value={formData.services}
+                                    name="query"
+                                    value={formData.query}
                                     onChange={handleChange}
                                     className={`w-full pl-10 pr-4 py-3 rounded-lg border ${
                                         isDark
@@ -203,6 +216,17 @@ const ContactUs = () => {
                     </form>
                 </motion.div>
             </div>
+            {isLoading && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="p-4 rounded-lg shadow-lg">
+                        <DotLottieReact
+                            src="https://lottie.host/aaf78749-130c-4919-9050-bdd126c83b78/shLqgpSkWk.lottie"
+                            loop
+                            autoplay
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
