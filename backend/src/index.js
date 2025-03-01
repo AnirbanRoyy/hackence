@@ -25,5 +25,5 @@ app.use(async (req, res, next) => {
     next();
 });
 
-// Export the serverless handler
-export const handler = serverless(app);
+// the @vercel/node builder expects the handler to be the default export
+export default serverless(app);
