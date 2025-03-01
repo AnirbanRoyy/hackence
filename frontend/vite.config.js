@@ -5,7 +5,7 @@ import path from "path";
 export default defineConfig({
     plugins: [react()],
     build: {
-        outDir: "../dist", // Output to Hackence/dist/
+        outDir: "dist", // Output to frontend/dist/
         emptyOutDir: true, // Clear the directory before building
     },
     server: {
