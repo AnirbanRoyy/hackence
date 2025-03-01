@@ -19,7 +19,7 @@ function Navbar() {
     const handleLogout = async () => {
         try {
             const response = await axios.post(
-                "http://localhost:8000/api/v1/users/logout"
+                "/api/v1/users/logout"
             );
             console.log(response);
         } catch (error) {

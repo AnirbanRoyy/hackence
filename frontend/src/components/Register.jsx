@@ -22,7 +22,7 @@ const RegistrationPage = () => {
             console.log({ username, password, email, fullName, contactDetails });
             
             const response = await axios.post(
-                "http://localhost:8000/api/v1/users/register",
+                "/api/v1/users/register",
                 { username, password, email, fullName, contactDetails }
             );
 
