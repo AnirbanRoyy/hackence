@@ -32,7 +32,7 @@ const ContactUs = () => {
         setIsLoading(true);
         try {
             await axios.post(
-                "/api/v1/customers/contact-us",
+                "http://localhost:8000/api/v1/customers/contact-us",
                 { ...formData }
             );
             setTimeout(() => {
