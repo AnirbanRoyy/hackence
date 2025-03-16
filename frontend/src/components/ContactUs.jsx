@@ -31,6 +31,11 @@ const ContactUs = () => {
         e.preventDefault();
         setIsLoading(true);
         try {
+            // remove any spaces after the country code(+91) in phone number
+            const phone = formData.phone.replace(/\s/g, "");
+
+            // Update the form data with the cleaned phone number
+            setFormData({ ...formData, phone });
             await axios.post(
                 "http://localhost:8000/api/v1/customers/contact-us",
                 { ...formData }
@@ -95,7 +100,7 @@ const ContactUs = () => {
                                             ? "bg-gray-700 border-gray-600 text-white"
                                             : "bg-gray-50 border-gray-300 text-gray-900"
                                     } focus:ring-blue-500 focus:border-blue-500`}
-                                    placeholder="John Doe"
+                                    placeholder="Alex Mercer"
                                     required
                                 />
                             </div>
@@ -119,7 +124,7 @@ const ContactUs = () => {
                                     }`}
                                 />
                                 <input
-                                    type="tel"
+                                    type="text"
                                     name="phone"
                                     value={formData.phone}
                                     onChange={handleChange}
@@ -128,7 +133,7 @@ const ContactUs = () => {
                                             ? "bg-gray-700 border-gray-600 text-white"
                                             : "bg-gray-50 border-gray-300 text-gray-900"
                                     } focus:ring-blue-500 focus:border-blue-500`}
-                                    placeholder="+1 234 567 890"
+                                    placeholder="+91 987654321"
                                     required
                                 />
                             </div>
@@ -161,7 +166,7 @@ const ContactUs = () => {
                                             ? "bg-gray-700 border-gray-600 text-white"
                                             : "bg-gray-50 border-gray-300 text-gray-900"
                                     } focus:ring-blue-500 focus:border-blue-500`}
-                                    placeholder="johndoe@example.com"
+                                    placeholder="alex.mercer@gmail.com"
                                     required
                                 />
                             </div>
